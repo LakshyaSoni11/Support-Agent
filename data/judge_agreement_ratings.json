@@ -1,0 +1,182 @@
+[
+  {
+    "id": "golden_0001",
+    "customer_text": "Eye never realized how much eye say eye until this damn glitch. And still nothing from @AppleSupport!!!!!",
+    "golden_reply": "@299278 We're here for you. Send us a DM, and we'll discuss this further there: https://t.co/GDrqU22YpT",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "software_update",
+    "human_overall": 1,
+    "judge_overall": 4
+  },
+  {
+    "id": "golden_0002",
+    "customer_text": "The iPhone 8 came out and all of the sudden my SE has started glitching. I know what you're trying to do, @115858, and it won't work.",
+    "golden_reply": "@158104 We want you to get the most out of your iPhone. What's happening specifically?",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "software_update",
+    "human_overall": 3,
+    "judge_overall": 2
+  },
+  {
+    "id": "golden_0003",
+    "customer_text": "@AppleSupport better get their shit together and get rid of the ? inside of a square. Fix this bullshit ASAP",
+    "golden_reply": "@498304 We want to help you with this. Let's try these steps next: https://t.co/xU1AGHStV6",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "software_update",
+    "human_overall": 2,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0004",
+    "customer_text": "@474356 @115858 I've gotten to the verification page a few times... then it fails.  GRRRR",
+    "golden_reply": "@479455 Let’s work together to get your new iPhone activated. Could you let us know more details via a DM? We’ll move from there. https://t.co/GDrqU22YpT",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "account_access",
+    "human_overall": 3,
+    "judge_overall": 4
+  },
+  {
+    "id": "golden_0005",
+    "customer_text": "@AppleSupport few times notifications doesn’t pop up or show up on the phone just make silent notification open the app to see notifications",
+    "golden_reply": "@462002 Hi there. We'd love to help. Are you still getting calls and text notifications when this happens?",
+    "agent_reply": "Thanks for reporting this. Try going to Settings > General > Software Update to check for the latest version. If issues persist after updating, let us know the specific behavior you're seeing.",
+    "intent": "messaging",
+    "human_overall": 5,
+    "judge_overall": 2
+  },
+  {
+    "id": "golden_0006",
+    "customer_text": "@AppleSupport my iPhone keeps putting itself on mute randomly",
+    "golden_reply": "@345239 We can help with that. Which iPhone do you own? What's the iOS version in Settings &gt; General &gt; About?",
+    "agent_reply": "Thanks for reaching out. For hardware concerns, we recommend trying a force restart first. If the issue persists, we'd like to help further - please DM us with your device model and iOS version.",
+    "intent": "device_hardware",
+    "human_overall": 5,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0007",
+    "customer_text": "why is my apple music trippin @115858 @AppleSupport @115948 I need answers",
+    "golden_reply": "@284023 Thanks for reaching out. We don't want you to miss out on your favorite music. We're happy to help! \nCan you tell us what's happening specifically?\nWhich device are you using?",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "billing_store",
+    "human_overall": 4,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0008",
+    "customer_text": "@AppleSupport 😊😊. Noted. Thanks for your prompt reply!",
+    "golden_reply": "@708469 You're welcome.  Feel free to reach out to us if you have any further questions.  Have a wonderful day!",
+    "agent_reply": "@user You're very welcome! We're glad we could help. Have a great day!",
+    "intent": "other",
+    "human_overall": 5,
+    "judge_overall": 5
+  },
+  {
+    "id": "golden_0009",
+    "customer_text": "@AppleSupport Thanks, but I don't have time for that (pardon the pun). I set up a cron job to sync the clock.",
+    "golden_reply": "@258642 Alright. Should you have availability at a later time, don’t hesitate to reach back out via DM. Take care.",
+    "agent_reply": "Thanks for reaching out to Apple Support. We're here to help! Could you tell us more about the issue you're experiencing so we can assist you better?",
+    "intent": "other",
+    "human_overall": 1,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0010",
+    "customer_text": "@AppleSupport I am using the slide on the side of my phone.",
+    "golden_reply": "@765662 When you're flipping the switch, is it showing a color?",
+    "agent_reply": "@user We're here to help. Since this involves a specific hardware interaction, please send us a DM with your device model and iOS version so we can connect you with a specialist for personalized assistance.",
+    "intent": "device_hardware",
+    "human_overall": 2,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0011",
+    "customer_text": "@115858 MY PHONE KEEPS CHANGING THE LETTER “I️” INTO A FUCKING BOX WITH A ?, FIX THIS SHIT NOW ITS FUCKING ANNOYING",
+    "golden_reply": "@597048 We’re here for you. Did you try this? https://t.co/xU1AGHStV6 Should it persist, send us a DM to discuss it further. https://t.co/GDrqU22YpT",
+    "agent_reply": "@115858 We’re sorry for the frustration. To get this resolved quickly, please DM us your device model and iOS version, or call 1-800-MY-APPLE for personalized support.",
+    "intent": "software_update",
+    "human_overall": 5,
+    "judge_overall": 4
+  },
+  {
+    "id": "golden_0012",
+    "customer_text": "@AppleSupport Just that",
+    "golden_reply": "@173133 DM us using the link below. We're glad to look into this with you. https://t.co/nYknMGviju",
+    "agent_reply": "@user We’re here to help. To better assist you with this, please send us a direct message so we can review the details and connect you with the right support. https://t.co/GDrqU22YpT",
+    "intent": "other",
+    "human_overall": 4,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0013",
+    "customer_text": "@AppleSupport problem solved! I restarted again! Thank you so much 😁",
+    "golden_reply": "@169779 We're happy to hear that worked. You know how to reach us if you ever need to again. We're online every day from 5am-8pm PST.",
+    "agent_reply": "Thanks for reaching out to Apple Support. We're here to help! Could you tell us more about the issue you're experiencing so we can assist you better?",
+    "intent": "other",
+    "human_overall": 1,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0014",
+    "customer_text": "@AppleSupport 11.1.2 (clean install). The problem was present in 10.0.",
+    "golden_reply": "@257978 Good to know. We'd like to take a closer look at this with you via DM. Reach out to us via the following link to continue: https://t.co/GDrqU22YpT",
+    "agent_reply": "Thanks for reporting this. Try going to Settings > General > Software Update to check for the latest version. If issues persist after updating, let us know the specific behavior you're seeing.",
+    "intent": "software_update",
+    "human_overall": 1,
+    "judge_overall": 2
+  },
+  {
+    "id": "golden_0015",
+    "customer_text": "Iphone phone, about 2 months technical service and no solution   @115858",
+    "golden_reply": "@458261 Let us know how we can help. Tell us more about what is happening there.",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "device_repair",
+    "human_overall": 4,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0016",
+    "customer_text": "@AppleSupport  🤷‍♂️why its not available 😥 any reason 🤔. https://t.co/qPvZNm3X90",
+    "golden_reply": "@126369 Availability of content is subject to change. Our iTunes Store can answer further questions:  https://t.co/SDIe7UiyJN",
+    "agent_reply": "Thanks for reaching out to Apple Support. We're here to help! Could you tell us more about the issue you're experiencing so we can assist you better?",
+    "intent": "billing_store",
+    "human_overall": 4,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0017",
+    "customer_text": "@AppleSupport i dmed you my problem. please check your dm’s.",
+    "golden_reply": "@668590 We have received your DM and will be responding there shortly.",
+    "agent_reply": "Thanks for reaching out to Apple Support. We're here to help! Could you tell us more about the issue you're experiencing so we can assist you better?",
+    "intent": "other",
+    "human_overall": 1,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0018",
+    "customer_text": "@AppleSupport Had to use an emoji sadly cause otherwise it wouldn’t fit",
+    "golden_reply": "@719343 Thank you for reaching out. We've received your DM and will continue working with you there.",
+    "agent_reply": "Thanks for reaching out to Apple Support. We're here to help! Could you tell us more about the issue you're experiencing so we can assist you better?",
+    "intent": "other",
+    "human_overall": 4,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0019",
+    "customer_text": "@116333 disappointed loyalist, iPhone 8 running around with issues &amp; embarrassments, no solution pls help sent details in mail to you",
+    "golden_reply": "@160233 We'd be happy to look into this with you. Send us a DM and tell us more about what's going on. https://t.co/GDrqU22YpT",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "complaint_frustration",
+    "human_overall": 3,
+    "judge_overall": 3
+  },
+  {
+    "id": "golden_0020",
+    "customer_text": "@AppleSupport I just downloaded the High Sierra and this just destroyed my Mac book Pro.",
+    "golden_reply": "@726741 We know how important your Mac is to you, and we'll do all we can to help. Describe for us what's happening in DM, and we'll get started: https://t.co/GDrqU22YpT",
+    "agent_reply": "We understand your concern and want to make sure we give you the best support. Please send us a DM so we can look into this further for you. We're here to help!",
+    "intent": "software_update",
+    "human_overall": 3,
+    "judge_overall": 4
+  }
+]

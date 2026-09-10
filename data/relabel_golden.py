@@ -1,0 +1,248 @@
+import json
+import io
+import sys
+
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+
+# HUMAN-LABELLED CORRECTIONS
+# Each entry: label_int -> (intent, escalation, reason)
+# Labels were assigned by reading each real conversation in the golden set.
+LABELS = {
+    1: ("software_update", "auto", "Known iOS 11 keyboard bug; documented fix"),
+    2: ("software_update", "escalate", "Accusatory; unclear device behavior after release"),
+    3: ("software_update", "auto", "Known iOS 11 keyboard symbol bug; link fix"),
+    4: ("account_access", "escalate", "Device activation/verification failure"),
+    5: ("messaging", "auto", "Notification troubleshooting is standard"),
+    6: ("device_hardware", "auto", "Silent/mute toggle hardware troubleshooting"),
+    7: ("billing_store", "auto", "Apple Music service issue; account-adjacent"),
+    8: ("other", "auto", "No support request; closing pleasantry"),
+    9: ("other", "auto", "Customer declined help; no action needed"),
+    10: ("device_hardware", "auto", "Continuation re: mute switch behavior"),
+    11: ("software_update", "auto", "Known iOS 11 I-keyboard bug; fix exists"),
+    12: ("other", "escalate", "No context; mid-conversation fragment"),
+    13: ("other", "auto", "Issue already resolved; no support needed"),
+    14: ("software_update", "auto", "Follow-up detail; known update bug"),
+    15: ("device_repair", "escalate", "Unresolved technical service after 2 months"),
+    16: ("billing_store", "auto", "iTunes content availability question"),
+    17: ("other", "escalate", "Already handled in DM by human"),
+    18: ("other", "escalate", "No context; conversation fragment"),
+    19: ("complaint_frustration", "escalate", "Unresolved issues + loyal customer frustration"),
+    20: ("software_update", "escalate", "Update 'destroyed' device; data risk"),
+    21: ("software_update", "auto", "Known iOS 11 bug; update available"),
+    22: ("software_update", "auto", "Post-update performance regression"),
+    23: ("software_update", "auto", "Post-update lag; standard troubleshoot"),
+    24: ("software_update", "auto", "Mail app freeze; known iOS 10/11 bug"),
+    25: ("software_update", "auto", "Post-update activation loop; article exists"),
+    26: ("software_update", "auto", "Known iOS 11 keyboard bug"),
+    27: ("software_update", "auto", "Post-update Apple Pay display regression"),
+    28: ("software_update", "auto", "Update assistance; standard"),
+    29: ("other", "auto", "Issue resolved; no action needed"),
+    30: ("software_update", "auto", "Post-update freezing; version check"),
+    31: ("software_update", "auto", "Follow-up detail; troubleshooting"),
+    32: ("software_update", "auto", "iOS 11 glitchiness; standard"),
+    33: ("software_update", "auto", "iOS 11 typography bug report"),
+    34: ("software_update", "auto", "Post-update performance on multiple devices"),
+    35: ("software_update", "auto", "Post-update performance; standard"),
+    36: ("software_update", "escalate", "VoiceOver user blocked from device"),
+    37: ("device_hardware", "auto", "Post-update charging stop; article exists"),
+    38: ("software_update", "auto", "Follow-up detail"),
+    39: ("software_update", "auto", "OTA update issue; known steps"),
+    40: ("software_update", "auto", "Update install failure; standard"),
+    41: ("billing_store", "escalate", "Order status requires account lookup"),
+    42: ("general_howto", "auto", "App feature question; factual answer"),
+    43: ("device_repair", "escalate", "Recurring hardware faults on child's device"),
+    44: ("general_howto", "auto", "Better-fix question; standard advise"),
+    45: ("general_howto", "auto", "Siri configuration how-to"),
+    46: ("general_howto", "auto", "Workaround question; slow device"),
+    47: ("software_update", "auto", "Boot loop after update; recovery steps"),
+    48: ("general_howto", "auto", "News source removal; documented"),
+    49: ("device_hardware", "auto", "Accessory kcover issue; diagnostics"),
+    50: ("account_access", "escalate", "Malware/security concern on device"),
+    51: ("general_howto", "auto", "Generic how-to fix request"),
+    52: ("software_update", "auto", "General slowdown after update"),
+    53: ("general_howto", "auto", "Content quality question; factual"),
+    54: ("complaint_frustration", "auto", "Update complaint; lag"),
+    55: ("software_update", "auto", "macOS update stuck; recovery steps"),
+    56: ("complaint_frustration", "auto", "Update + hardware complaint"),
+    57: ("account_access", "auto", "Apple Music data loss; iCloud restore"),
+    58: ("software_update", "auto", "Post-update barely works; standard"),
+    59: ("complaint_frustration", "escalate", "Case never actioned in promised window"),
+    60: ("software_update", "auto", "Known iOS 11 keyboard bug"),
+    61: ("messaging", "auto", "Call behavior bug; troubleshooting"),
+    62: ("messaging", "auto", "iMessage overlay bug"),
+    63: ("messaging", "auto", "Text corruption bug after update"),
+    64: ("messaging", "auto", "SMS scrambling to non-iPhone"),
+    65: ("messaging", "auto", "iMessage symbol bug"),
+    66: ("messaging", "auto", "Autocorrect/keyboard bug"),
+    67: ("messaging", "auto", "Continued report, image attached"),
+    68: ("software_update", "auto", "Maps location indicator bug"),
+    69: ("software_update", "auto", "Post-update data loss; restore needed"),
+    70: ("device_repair", "escalate", "Repair center lost device + no response"),
+    71: ("messaging", "auto", "Caller ID display bug"),
+    72: ("messaging", "escalate", "Cannot call; emergency context"),
+    73: ("other", "auto", "Channel preference request"),
+    74: ("complaint_frustration", "escalate", "Open case mishandled; reschedule failed"),
+    75: ("other", "auto", "Activity challenge data; non-issue"),
+    76: ("complaint_frustration", "escalate", "4+ hours support, device still broken"),
+    77: ("messaging", "auto", "Character rendering bug"),
+    78: ("messaging", "auto", "Notifications broken after update"),
+    79: ("messaging", "auto", "Continuation of notification report"),
+    80: ("device_repair", "escalate", "Warranty-adjacent repair request"),
+    81: ("device_hardware", "auto", "Battery drain; battery diagnostics"),
+    82: ("general_howto", "auto", "Battery health check how-to"),
+    83: ("software_update", "auto", "Post-update battery drain + lag"),
+    84: ("connectivity", "auto", "Bluetooth broken post-update"),
+    85: ("device_hardware", "auto", "Screen freeze; force restart"),
+    86: ("device_hardware", "auto", "Battery drain complaint"),
+    87: ("software_update", "auto", "Multiple app bugs after iOS 11"),
+    88: ("device_hardware", "escalate", "Screen fault; repeated issue"),
+    89: ("software_update", "auto", "Lockscreen glitch after update"),
+    90: ("software_update", "auto", "Post-update battery drain"),
+    91: ("software_update", "auto", "Continuation; battery issue persists"),
+    92: ("device_hardware", "auto", "Speaker + random reboots"),
+    93: ("software_update", "auto", "Mail app stuck screen"),
+    94: ("complaint_frustration", "auto", "Sarcastic battery complaint"),
+    95: ("software_update", "auto", "Split-screen/update issue post-update"),
+    96: ("software_update", "auto", "Compass calibration drain bug"),
+    97: ("software_update", "auto", "Post-update battery/volume bugs"),
+    98: ("device_hardware", "auto", "Bluetooth listening heat"),
+    99: ("software_update", "auto", "Post-update juddery/slow"),
+    100: ("software_update", "auto", "Post-update battery backup"),
+    101: ("complaint_frustration", "escalate", "Unresolved DMs/emails"),
+    102: ("software_update", "escalate", "Data loss (contacts erased)"),
+    103: ("complaint_frustration", "escalate", "Angry, no support received"),
+    104: ("device_repair", "escalate", "Apple Watch unresolved after case"),
+    105: ("complaint_frustration", "auto", "Undo update; frustration"),
+    106: ("complaint_frustration", "auto", "OS frustration complaint"),
+    107: ("software_update", "auto", "Known keyboard android-box bug"),
+    108: ("complaint_frustration", "auto", "iOS 11 quality complaint"),
+    109: ("connectivity", "auto", "Follow-up on wifi toggle bug"),
+    110: ("other", "auto", "Closure, no support needed"),
+    111: ("complaint_frustration", "escalate", "Vulgar, brand attack"),
+    112: ("software_update", "auto", "Known keyboard bug"),
+    113: ("software_update", "auto", "Logic Pro crash on open"),
+    114: ("billing_store", "escalate", "Pre-order fulfillment dispute"),
+    115: ("software_update", "auto", "Repeat issue post-update; iOS downgrade complaint"),
+    116: ("complaint_frustration", "auto", "iOS complaint"),
+    117: ("software_update", "auto", "Post-update slowness complaint"),
+    118: ("complaint_frustration", "auto", "iOS 11.02 issue complaint"),
+    119: ("complaint_frustration", "auto", "Audiobooks on flight; frustration"),
+    120: ("software_update", "escalate", "Troubleshooting path failed; needs escalation"),
+    121: ("account_access", "auto", "iCloud Files access question"),
+    122: ("account_access", "escalate", "Recovery denied; account locked"),
+    123: ("account_access", "escalate", "Password reset loop on new device"),
+    124: ("software_update", "auto", "Post-update freeze/dialing"),
+    125: ("account_access", "escalate", "Photo data at risk after iCloud sign-out"),
+    126: ("complaint_frustration", "escalate", "10-yr customer lost; repair ordeal"),
+    127: ("account_access", "auto", "Repeated password prompts"),
+    128: ("billing_store", "auto", "Apple Music account display glitch"),
+    129: ("account_access", "auto", "Country mismatch question"),
+    130: ("account_access", "auto", "2FA region missing; setup help"),
+    131: ("general_howto", "auto", "iCloud plan question"),
+    132: ("account_access", "auto", "iCloud restore behavior question"),
+    133: ("account_access", "escalate", "Security incident; locked out"),
+    134: ("account_access", "escalate", "Locked out, can't recover"),
+    135: ("general_howto", "auto", "Feature/bug question with accessibility"),
+    136: ("other", "auto", "Progress update; no action"),
+    137: ("device_repair", "escalate", "Disabled device; mail-in repair"),
+    138: ("account_access", "escalate", "Cross-device ID mismatch + frustrated"),
+    139: ("account_access", "escalate", "Account hacked; urgent recovery"),
+    140: ("account_access", "auto", "iCloud Windows sync; standard"),
+    141: ("billing_store", "auto", "iTunes help request"),
+    142: ("complaint_frustration", "escalate", "Bad iTunes support experience"),
+    143: ("billing_store", "auto", "Purchase question"),
+    144: ("billing_store", "escalate", "Double payment + refund request"),
+    145: ("billing_store", "auto", "Family sharing purchase controls"),
+    146: ("billing_store", "auto", "Purchased album playback order bug"),
+    147: ("software_update", "auto", "App Store apps missing post-update"),
+    148: ("device_hardware", "auto", "Charging heat question"),
+    149: ("software_update", "auto", "macOS/iTunes bugs complaint"),
+    150: ("device_repair", "auto", "AppleCare+ upgrade logistics"),
+    151: ("connectivity", "auto", "Headphone control broken post-update"),
+    152: ("device_hardware", "escalate", "MacBook crash loop + won't charge"),
+    153: ("general_howto", "auto", "Charger compatibility question"),
+    154: ("billing_store", "auto", "Verification loop on purchases"),
+    155: ("billing_store", "auto", "Purchased tracks deleted"),
+    156: ("billing_store", "escalate", "Delivery promise not honored"),
+    157: ("software_update", "auto", "Keyboard question-mark bug"),
+    158: ("software_update", "auto", "App Store/YouTube won't open"),
+    159: ("complaint_frustration", "auto", "Threat to switch to Samsung; update broken"),
+    160: ("general_howto", "auto", "Upgrade program return logistics"),
+    161: ("device_repair", "auto", "AppleCare signup help"),
+    162: ("device_repair", "escalate", "Warranty act; legal citation"),
+    163: ("device_repair", "escalate", "Mac dead; urgent appointment"),
+    164: ("device_repair", "auto", "Restore/setup issue on new device"),
+    165: ("device_repair", "escalate", "Replacement fulfillment delayed"),
+    166: ("other", "auto", "Non-English; no support request"),
+    167: ("software_update", "escalate", "Boot loop; needs restore"),
+    168: ("device_repair", "escalate", "Wrong band at store; exchange"),
+    169: ("account_access", "auto", "iCloud Numbers file visibility"),
+    170: ("billing_store", "auto", "Store/app access connectivity"),
+    171: ("other", "escalate", "Phishing concern to report"),
+    172: ("device_repair", "escalate", "Mac broken; Genius Bar no appointments"),
+    173: ("billing_store", "auto", "Technical email delivery issue"),
+    174: ("software_update", "auto", "Watch app bug"),
+    175: ("device_repair", "escalate", "New Mac defective; service complaint"),
+    176: ("software_update", "auto", "iTunes restore UI issue"),
+    177: ("device_repair", "escalate", "Mac broken; appointment difficulty"),
+    178: ("general_howto", "auto", "Pre-order logistics question"),
+    179: ("complaint_frustration", "auto", "iOS 11 crashes/freezes complaint"),
+    180: ("complaint_frustration", "escalate", "Unprofessional in-store staff"),
+    181: ("connectivity", "escalate", "Repeated failure despite hotline"),
+    182: ("connectivity", "auto", "AirPods not working; bluetooth troubleshoot"),
+    183: ("connectivity", "auto", "WiFi/Bluetooth glitch continues"),
+    184: ("connectivity", "auto", "WiFi/BT self-activating"),
+    185: ("connectivity", "auto", "Bluetooth static; paid repair futile"),
+    186: ("connectivity", "auto", "Bluetooth radio issue"),
+    187: ("connectivity", "auto", "WiFi/BT auto-on"),
+    188: ("connectivity", "auto", "AirDrop stuck"),
+    189: ("connectivity", "auto", "WiFi toggle behavior"),
+    190: ("connectivity", "auto", "WiFi auto-on"),
+    191: ("connectivity", "auto", "Control center wifi toggle feature"),
+    192: ("connectivity", "auto", "Cellular data how-to"),
+    193: ("connectivity", "auto", "WiFi sync/device message"),
+    194: ("connectivity", "auto", "WiFi quick-toggle limitation"),
+    195: ("software_update", "auto", "Update install error over wifi"),
+    196: ("connectivity", "auto", "Bluetooth auto-on after airplane mode"),
+    197: ("connectivity", "auto", "4G shows but no data"),
+    198: ("connectivity", "auto", "WiFi toggle moved off CC"),
+    199: ("connectivity", "auto", "WiFi control center complaint"),
+    200: ("device_repair", "auto", "Warranty repair eligibility question"),
+}
+
+def main():
+    golden = json.load(open('D:/hiver/ai-support-agent/data/golden_set.json', encoding='utf-8'))
+    assert len(golden) == 200, f"Expected 200, got {len(golden)}"
+
+    changed = 0
+    for i, item in enumerate(golden):
+        idx = i + 1
+        if idx in LABELS:
+            intent, esc, reason = LABELS[idx]
+            if item['intent'] != intent or item['escalation'] != esc:
+                changed += 1
+            item['intent'] = intent
+            item['escalation'] = esc
+            item['escalation_reason'] = reason
+            item['label_note'] = "human"
+
+    # Balance check per intent
+    counts = {}
+    for item in golden:
+        counts[item['intent']] = counts.get(item['intent'], 0) + 1
+
+    esc = {}
+    for item in golden:
+        esc[item['escalation']] = esc.get(item['escalation'], 0) + 1
+
+    with open('D:/hiver/ai-support-agent/data/golden_set.json', 'w', encoding='utf-8') as f:
+        json.dump(golden, f, indent=2, ensure_ascii=False)
+
+    print(f"Label pass complete. {changed} items corrected.")
+    print(f"\nIntent distribution after human pass:")
+    for k, v in sorted(counts.items(), key=lambda x: -x[1]):
+        print(f"  {k}: {v}")
+    print(f"\nEscalation distribution: {esc}")
+
+if __name__ == "__main__":
+    main()

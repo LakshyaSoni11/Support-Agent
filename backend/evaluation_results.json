@@ -1,0 +1,171 @@
+{
+  "classification": {
+    "accuracy": 0.525,
+    "perIntent": {
+      "device_hardware": {
+        "precision": 0.375,
+        "recall": 0.5,
+        "f1": 0.42857142857142855
+      },
+      "software_update": {
+        "precision": 0.5538461538461539,
+        "recall": 0.6206896551724138,
+        "f1": 0.5853658536585366
+      },
+      "connectivity": {
+        "precision": 1,
+        "recall": 0.6666666666666666,
+        "f1": 0.8
+      },
+      "messaging": {
+        "precision": 0.5,
+        "recall": 0.5384615384615384,
+        "f1": 0.5185185185185186
+      },
+      "account_access": {
+        "precision": 0.7333333333333333,
+        "recall": 0.6470588235294118,
+        "f1": 0.6875
+      },
+      "billing_store": {
+        "precision": 0.42857142857142855,
+        "recall": 0.4,
+        "f1": 0.4137931034482759
+      },
+      "device_repair": {
+        "precision": 1,
+        "recall": 0.47058823529411764,
+        "f1": 0.6399999999999999
+      },
+      "general_howto": {
+        "precision": 0.375,
+        "recall": 0.46153846153846156,
+        "f1": 0.41379310344827586
+      },
+      "complaint_frustration": {
+        "precision": 0.3333333333333333,
+        "recall": 0.19047619047619047,
+        "f1": 0.24242424242424246
+      },
+      "other": {
+        "precision": 0.2692307692307692,
+        "recall": 0.5384615384615384,
+        "f1": 0.3589743589743589
+      }
+    }
+  },
+  "escalation": {
+    "accuracy": 0.745,
+    "precision": 0.4897959183673469,
+    "recall": 0.48,
+    "f1": 0.48484848484848486
+  },
+  "replyQuality": {
+    "reply_quality": 4.32,
+    "appropriateness": 2.44,
+    "grounding": 2.58,
+    "helpfulness": 1.82,
+    "overall": 2.42
+  },
+  "agreement": {
+    "kappa": 1,
+    "agreementRate": 1,
+    "note": "LLM judge self-consistency over 20 examples (temp 0.1). True human-judge kappa requires a second human annotator."
+  },
+  "baselines": {
+    "trivial": {
+      "classification": 0.065,
+      "escalation": 0
+    },
+    "keyword": {
+      "classification": 0.525,
+      "escalation": 0.26027397260273977
+    },
+    "agent": {
+      "classification": 0.525,
+      "escalation": 0.48484848484848486
+    }
+  },
+  "failureModes": [
+    {
+      "mode": "Escalation: predicted auto, expected escalate",
+      "count": 26,
+      "examples": [
+        {
+          "text": "The iPhone 8 came out and all of the sudden my SE has started glitching. I know what you're trying t",
+          "expected": "escalate",
+          "predicted": "auto"
+        },
+        {
+          "text": "@474356 @115858 I've gotten to the verification page a few times... then it fails.  GRRRR",
+          "expected": "escalate",
+          "predicted": "auto"
+        }
+      ]
+    },
+    {
+      "mode": "Escalation: predicted escalate, expected auto",
+      "count": 25,
+      "examples": [
+        {
+          "text": "@AppleSupport Yeah and it switches back on",
+          "expected": "auto",
+          "predicted": "escalate"
+        },
+        {
+          "text": "@AppleSupport Thank you. All done",
+          "expected": "auto",
+          "predicted": "escalate"
+        }
+      ]
+    },
+    {
+      "mode": "Misclassified complaint_frustration as software_update",
+      "count": 10,
+      "examples": [
+        {
+          "text": "Can I just say the new iOS update sucks. Like it made everything so much more laggy and hard to use.",
+          "expected": "complaint_frustration",
+          "predicted": "software_update"
+        },
+        {
+          "text": "iPhone X has come out all but two days and my 6S is already slow as a rock. What is this @AppleSuppo",
+          "expected": "complaint_frustration",
+          "predicted": "software_update"
+        }
+      ]
+    },
+    {
+      "mode": "Misclassified software_update as device_hardware",
+      "count": 8,
+      "examples": [
+        {
+          "text": "@AppleSupport I own an IPhone 6 64gb. Since the new update 11.1. Battery drain fast and phone lags t",
+          "expected": "software_update",
+          "predicted": "device_hardware"
+        },
+        {
+          "text": "@AppleSupport Yes, I know how to save battery...and I’m on iOS 11.1.2",
+          "expected": "software_update",
+          "predicted": "device_hardware"
+        }
+      ]
+    },
+    {
+      "mode": "Misclassified software_update as other",
+      "count": 5,
+      "examples": [
+        {
+          "text": "@AppleSupport better get their shit together and get rid of the ? inside of a square. Fix this bulls",
+          "expected": "software_update",
+          "predicted": "other"
+        },
+        {
+          "text": "@115858 MY PHONE KEEPS CHANGING THE LETTER “I️” INTO A FUCKING BOX WITH A ?, FIX THIS SHIT NOW ITS F",
+          "expected": "software_update",
+          "predicted": "other"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+# Markdown files except README
+*.md
+!README.md
+
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+*.tsbuildinfo
+
+# OS/Editor
+.DS_Store
+.vscode/
+.idea/
+*.swp

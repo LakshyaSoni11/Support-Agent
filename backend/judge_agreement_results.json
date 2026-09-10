@@ -1,0 +1,7 @@
+{
+  "n": 20,
+  "agreement": 0.1,
+  "adjacentAgreement": 0.7,
+  "kappa": -0.11801242236024846,
+  "note": "Human rater: the project author. LLM judge: default. Each rated overall (1-5) with the identical rubric."
+}
