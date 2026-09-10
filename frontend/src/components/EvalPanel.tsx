@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getIntentInfo, INTENTS } from "../intents";
+import { getIntentInfo, API_URL, INTENTS } from "../intents";
 
 interface EvalResult {
   classification: { accuracy: number; perIntent: Record<string, { precision: number; recall: number; f1: number }> };
@@ -19,7 +19,7 @@ export default function EvalPanel() {
     setRunning(true);
     setError(null);
     try {
-      const res = await fetch("/api/evaluate", { method: "POST" });
+      const res = await fetch(`${API_URL}/api/evaluate`, { method: "POST" });
       const data = await res.json().catch(() => null);
       if (!res.ok) {
         setError(`Evaluation failed: ${data?.error || `HTTP ${res.status}`}`);

@@ -1,3 +1,5 @@
+export const API_URL = import.meta.env.VITE_API_URL || '';
+
 const INTENTS: Record<string, { label: string; color: string; icon: string }> = {
   device_hardware: { label: "Device Hardware", color: "bg-red-100 text-red-800", icon: "📱" },
   software_update: { label: "Software Update", color: "bg-blue-100 text-blue-800", icon: "🔄" },

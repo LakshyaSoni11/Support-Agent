@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { getIntentInfo, type AgentResult } from "../intents";
+import { getIntentInfo, API_URL, type AgentResult } from "../intents";
 
 interface Message {
   id: string;
@@ -57,7 +57,7 @@ export default function ChatPanel() {
     setMessages((prev) => [...prev, agentMsg]);
 
     try {
-      const res = await fetch("/api/process-stream", {
+      const res = await fetch(`${API_URL}/api/process-stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text, conversationId }),

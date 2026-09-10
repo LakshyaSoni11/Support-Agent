@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getIntentInfo, INTENTS } from "../intents";
+import { getIntentInfo, API_URL, INTENTS } from "../intents";
 
 interface EvalExample {
   id: string;
@@ -20,7 +20,7 @@ export default function ExamplesPanel() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/examples");
+      const res = await fetch(`${API_URL}/api/examples`);
       const data = await res.json().catch(() => null);
       if (!res.ok) {
         setError(`Failed to load examples: ${data?.error || `HTTP ${res.status}`}`);
