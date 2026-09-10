@@ -106,7 +106,6 @@ Non-English messages and mid-thread fragments ("Just that") land in `other` and 
 
 - **Backend (Railway)**: root dir `backend`; variables `GROQ_API_KEY` and `CORS_ORIGIN` (comma-separated frontend origins; default `http://localhost:5173`), both scoped to build time and runtime. Redeploy after any variable change.
 - **Frontend (Vercel)**: root dir `frontend`; env `VITE_API_URL` = backend URL (empty → same origin).
-- **Smoke test**: `GET <backend>/api/health`. Backend log prints `LLM mode: Groq API (LLM)` when the key is set. Browser CORS failures mean `CORS_ORIGIN` is missing or the backend wasn't redeployed.
 
 ## Project layout
 
