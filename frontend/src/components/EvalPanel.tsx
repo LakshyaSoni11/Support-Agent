@@ -128,7 +128,7 @@ function ResultsDisplay({ results }: { results: EvalResult }) {
             return (
               <div key={intent} className="flex items-center space-x-3">
                 <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${info.color} w-36 text-center`}>
-                  {info.icon} {info.label}
+                  {info.label}
                 </span>
                 <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
                   <div

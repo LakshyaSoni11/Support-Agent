@@ -90,7 +90,7 @@ export default function ExamplesPanel() {
                         : `${info.color} hover:opacity-80`
                     }`}
                   >
-                    {info.icon} {info.label} ({count})
+                    {info.label} ({count})
                   </button>
                 );
               })}
@@ -103,7 +103,7 @@ export default function ExamplesPanel() {
                   <div key={ex.id} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                     <div className="flex items-start justify-between mb-2">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${info.color}`}>
-                        {info.icon} {info.label}
+                        {info.label}
                       </span>
                       <span
                         className={`px-2 py-0.5 rounded-full text-xs font-medium ${

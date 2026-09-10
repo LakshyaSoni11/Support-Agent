@@ -157,7 +157,6 @@ export default function ChatPanel() {
       <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
         {messages.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full text-center text-apple-gray">
-            <div className="text-6xl mb-4">🍎</div>
             <h2 className="text-xl font-semibold text-apple-dark mb-2">
               Apple Support AI Agent
             </h2>
@@ -273,7 +272,7 @@ function ResultPanel({ result }: { result: AgentResult }) {
           <div className="flex items-center space-x-2">
             <span className="text-apple-gray">Intent:</span>
             <span className={`px-2 py-0.5 rounded-full font-medium ${intentInfo.color}`}>
-              {intentInfo.icon} {intentInfo.label}
+              {intentInfo.label}
             </span>
             <span className="text-apple-gray">
               ({(result.classification.confidence * 100).toFixed(0)}%)
@@ -291,7 +290,7 @@ function ResultPanel({ result }: { result: AgentResult }) {
                   : "bg-amber-100 text-amber-800"
               }`}
             >
-              {result.escalation.decision === "auto" ? "✅ Auto-handle" : "👤 Escalate"}
+              {result.escalation.decision === "auto" ? "Auto-handle" : "Escalate"}
             </span>
           </div>
           <p className="text-apple-gray italic">{result.escalation.reason}</p>

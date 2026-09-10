@@ -5,10 +5,10 @@ import ExamplesPanel from "./components/ExamplesPanel";
 
 type Tab = "chat" | "eval" | "examples";
 
-const tabs: { id: Tab; label: string; icon: string }[] = [
-  { id: "chat", label: "Agent Chat", icon: "💬" },
-  { id: "eval", label: "Evaluation", icon: "📊" },
-  { id: "examples", label: "Golden Set", icon: "📝" },
+const tabs: { id: Tab; label: string }[] = [
+  { id: "chat", label: "Agent Chat" },
+  { id: "eval", label: "Evaluation" },
+  { id: "examples", label: "Golden Set" },
 ];
 
 export default function App() {
@@ -20,7 +20,6 @@ export default function App() {
       <header className="bg-white border-b border-gray-200 px-6 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <span className="text-2xl">🍎</span>
             <div>
               <h1 className="text-lg font-semibold text-apple-dark">
                 Apple Support AI Agent
@@ -43,7 +42,7 @@ export default function App() {
                     : "text-apple-gray hover:text-apple-dark"
                 }`}
               >
-                {tab.icon} {tab.label}
+                {tab.label}
               </button>
             ))}
           </nav>

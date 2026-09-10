@@ -1,4 +1,4 @@
-# 🍎 Apple Support AI Agent
+# Apple Support AI Agent
 
 An AI support agent for **AppleSupport** (from the [Customer Support on Twitter](https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter) dataset, ~3M tweets / 100+ brands) that:
 
@@ -143,9 +143,7 @@ In LLM mode (`GROQ_API_KEY` set) the harness uses Groq as judge on a 50-reply sa
 - measures **judge self-consistency** as a κ proxy (20 examples, temp 0.1 retest),
 - and — via `npm run judge-agreement` — produces **genuine human-judge κ** by having a human rate the same replies on the identical 1–5 rubric (results in Section 5).
 
-Measured (real run, before the retrieval-grounded drafter landed): **overall 2.42/5**, broken down as reply_quality 4.32 · appropriateness 2.44 · grounding 2.58 · helpfulness 1.82. The drafts read like Apple Support (high `quality`) but the judge finds them **not concretely helpful** (low `helpfulness`) — style without substance, which the retrieval-grounded drafter (`retrieve.ts`) is aimed at. Self-consistency κ = 1.00 (the judge repeats itself), **but human agreement is bad (κ = −0.12)** — see Section 5. Judge scores are inputs to the report, not the headline.
-
-Measured (real run, before retrieval-grounding landed): **overall 2.42/5**, broken down as reply_quality 4.32 · appropriateness 2.44 · grounding 2.58 · helpfulness 1.82. The spread is instructive — the drafts read like Apple Support (high `quality`) but the judge finds them **not concretely helpful** (low `helpfulness`) and only loosely grounded in how Apple actually responded historically. That was a real product gap: style without substance → **the fix (retrieval-grounded drafting) landed after this run**; results get refreshed in the next `npm run evaluate`. Self-consistency κ = 1.00 (100% identical re-ratings at temp 0.1 — a well-behaved judge, which is *not* the same as agreeing with a human).
+Measured (real run, before retrieval-grounding landed): **overall 2.42/5**, broken down as reply_quality 4.32 · appropriateness 2.44 · grounding 2.58 · helpfulness 1.82. The spread is instructive — the drafts read like Apple Support (high `quality`) but the judge finds them **not concretely helpful** (low `helpfulness`) and only loosely grounded in how Apple actually responded historically. That was a real product gap: style without substance. The fix (retrieval-grounded drafting) landed after this run; results get refreshed in the next `npm run evaluate`. Self-consistency κ = 1.00 (100% identical re-ratings at temp 0.1 — a well-behaved judge, which is *not* the same as agreeing with a human). Human agreement is poor (κ = −0.12) — see Section 5. Judge scores are inputs to the report, not the headline.
 
 Without a key, the judge can't run → the harness reports a default 3.0/5 and prints `n/a` for κ.
 
@@ -161,9 +159,9 @@ The LLM-mode run's failure analysis (200 golden examples) surfaces the same stru
 
 1. **Escalation under-shoot → escalate expected, agent says auto (26 errors).** *"The iPhone 8 came out and all of the sudden my SE has started glitching… I know what you're trying to do."* / *"I've gotten to the verification page a few times... then it fails. GRRRR..."* — accusatory or repeated-failure cases where a human would escalate for relationship/safety reasons. The LLM is *too quick to auto-resolve* on messy interactions.
 2. **Escalation over-shoot → auto expected, agent escalates (25 errors).** *"Yeah and it switches back on..."* / *"Thank you. All done..."* — benign follow-ups and acknowledgements get escalated, i.e., the LLM over-triggers human routing on fragments it can't fully resolve. Both this and #1 point at the same root cause as the golden set itself flagged: **classifying single tweets in isolation loses the thread**.
-3. **complaint_frustration ➜ software_update (10 errors).** *"Can I just say the new iOS update sucks. Like it made everything so much more laggy..."* The message IS both (update + complaint). Intents aren't mutually exclusive; a multi-label head or a `sentiment` feature would help.
-4. **software_update ➜ device_hardware (8 errors).** *"Since the new update 11.1. Battery drain fast and phone lags."* The LLM, like the rules, lets "battery" override the "since the update" temporal cue. Need temporal-frame priority ("since update" beats entity keywords).
-5. **software_update ➜ other (5 errors).** *"MY PHONE KEEPS CHANGING THE LETTER 'I' INTO A FUCKING BOX WITH A ?."* The viral iOS 11 keyboard bug falls into `other` — rare-but-recurrent meme issues need few-shot retrieval of historical resolutions. This is exactly what the new retrieval-grounded drafter (`retrieve.ts`) is designed to fix — rare issues now get grounded in how Apple actually replied to the same bug historically.
+3. **complaint_frustration to software_update (10 errors).** *"Can I just say the new iOS update sucks. Like it made everything so much more laggy..."* The message IS both (update + complaint). Intents aren't mutually exclusive; a multi-label head or a `sentiment` feature would help.
+4. **software_update to device_hardware (8 errors).** *"Since the new update 11.1. Battery drain fast and phone lags."* The LLM, like the rules, lets "battery" override the "since the update" temporal cue. Need temporal-frame priority ("since update" beats entity keywords).
+5. **software_update to other (5 errors).** *"MY PHONE KEEPS CHANGING THE LETTER 'I' INTO A FUCKING BOX WITH A ?."* The viral iOS 11 keyboard bug falls into `other` — rare-but-recurrent meme issues need few-shot retrieval of historical resolutions. This is exactly what the new retrieval-grounded drafter (`retrieve.ts`) is designed to fix — rare issues now get grounded in how Apple actually replied to the same bug historically.
 
 Non-metric observations (real): **non-English** messages land in `other`, and **mid-conversation fragments** ("Just that", "Its stills shows 4G…") are unclassifiable without the thread.
 
