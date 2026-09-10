@@ -15,6 +15,9 @@ dist/
 build/
 *.tsbuildinfo
 
+# Large data files
+data/twcs/
+
 # OS/Editor
 .DS_Store
 .vscode/
