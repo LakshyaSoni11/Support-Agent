@@ -253,13 +253,43 @@ Where they agree (adjacent): mid-quality or generic replies. Where they disagree
 
 ---
 
+## Deployment
+
+The repo is configured for **Railway (backend)** + **Vercel (frontend)**, with no single-workspace assumption — the two pieces run as separate services talking over HTTPS.
+
+### Backend — Railway
+
+1. Push the repo to GitHub, then create a new Railway project from it.
+2. Set the service **Root Directory** to `backend` and pick `NIXPACKS` (default; `backend/railway.json` supplies the start command `npm run build && npm start` and healthcheck `/api/health`).
+3. Set service variables (scope: build time **and** runtime):
+   - `GROQ_API_KEY` — your Groq key (without it the service runs in deterministic fallback/keyword mode)
+   - `CORS_ORIGIN` — comma-separated list of allowed frontend origins, e.g. `https://your-app.vercel.app` (defaults to `http://localhost:5173`; the value is read by `src/index.ts`)
+   - `PORT` — optional; Railway injects it automatically
+4. Redeploy after any variable change — build-time variables must exist before the build runs.
+5. The public URL generated under *Settings → Networking* (e.g. `https://your-app.up.railway.app`) is the backend base URL.
+
+### Frontend — Vercel
+
+1. Import the same repo. Set **Root Directory** to `frontend` (Vite auto-detect; build `npm run build`, output `dist`).
+2. Set the environment variable `VITE_API_URL` to the Railway backend URL (e.g. `https://your-app.up.railway.app`). If empty, the frontend calls the same origin (`""` in `src/intents.ts`).
+3. After both are live, copy the Vercel origin (e.g. `https://your-app.vercel.app`) into the backend's `CORS_ORIGIN` variable and redeploy the backend.
+
+### Smoke test / troubleshooting
+
+- `GET <backend>/api/health` → `{"status":"ok",...}`.
+- Backend start log prints `LLM mode: Groq API (LLM)` when `GROQ_API_KEY` is set, or `LLM mode: Fallback (keyword-based)` otherwise.
+- Browser `Failed to fetch` / CORS errors on the chat → either `CORS_ORIGIN` is missing the Vercel origin, or the backend wasn't redeployed after the variable changed.
+- If chat replies are generic templates, the LLM stream call failed mid-request and the template fallback (with *no* "Show agent analysis" answer) was used — check the service logs for `Reply drafting error`.
+
+---
+
 ## Project structure
 
 ```
 ai-support-agent/
 ├── backend/
 │   ├── src/
-│   │   ├── index.ts          # Express API (classify, process, batch, evaluate, examples)
+│   │   ├── index.ts          # Express API (classify, process, stream, batch, evaluate, examples)
 │   │   ├── evaluate.ts       # Evaluation harness (metrics, baselines, LLM-judge, failure analysis)
 │   │   ├── judge_agreement.ts # Human-vs-LLM-judge agreement study (Cohen's κ)
 │   │   └── lib/
@@ -271,10 +301,15 @@ ai-support-agent/
 │   │       ├── judge.ts      # Shared LLM-as-judge rubric + Cohen's κ
 │   │       ├── model.ts      # MODEL / JUDGE_MODEL selection (env-overridable)
 │   │       └── retry.ts      # Rate-limit/JSON retry with exponential backoff
-│   └── evaluation_results.json
+│   ├── railway.json          # Railway build/deploy config (Nixpacks, start command, healthcheck)
+│   ├── Procfile              # web: node dist/index.js
+│   ├── .env.example          # GROQ_API_KEY / PORT (copy to .env)
+│   ├── evaluation_results.json
 │   └── judge_agreement_results.json
 ├── frontend/                 # React + Tailwind + Vite
-│   └── src/components/       # ChatPanel, EvalPanel, ExamplesPanel
+│   ├── src/components/       # ChatPanel, EvalPanel, ExamplesPanel
+│   ├── src/vite-env.d.ts     # Vite client types (import.meta.env)
+│   └── .env.production       # VITE_API_URL (set to deployed backend URL)
 ├── data/
 │   ├── prepare_data.py       # Extracts Apple convos, builds golden + training sets
 │   ├── relabel_golden.py     # Documents the human label-correction pass (126/200 changed)
@@ -292,6 +327,8 @@ ai-support-agent/
 | `/api/intents` | GET | Intent taxonomy |
 | `/api/classify` | POST `{text}` | Intent only |
 | `/api/process` | POST `{text, conversationId?}` | Full pipeline |
+| `/api/process-stream` | POST `{text, conversationId?}` | Full pipeline, reply streamed as SSE (`event: reply` chunks, `done`, `error`) |
+| `/api/conversations/:id` | GET | Conversation history (in-memory) |
 | `/api/batch` | POST `{messages[]}` | Batch (≤50) |
 | `/api/examples` | GET | Golden set |
 | `/api/eval-results` | GET | Last evaluation JSON |
